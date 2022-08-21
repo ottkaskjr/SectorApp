@@ -1,0 +1,38 @@
+﻿@model SectorApp.Models.Sector.UpdateSectorViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        @if (ViewData.ContainsKey("SectorUpdateSuccess"))
+            {
+                <div class="alert alert-success" role="alert">
+                    @ViewData["SectorUpdateSuccess"];
+                </div>
+            }
+        <p class="my-3">Please enter your name and pick the sectors you are currently involved in.</p>
+        <form asp-controller="Sector" asp-action="Update">
+            <div class="form-group mb-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" value="@Model.Name"class="form-control" placeholder="Name" aria-describedby="nameHelp"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="Sectors"></label>
+                @Html.DropDownListFor(m => m.SelectedSectorCode, Model.GetSectorListItems(), new { @class = "form-control" })
+                <span asp-validation-for="SelectedSectorCode" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-4">
+                @Html.CheckBoxFor(m => m.AgreeToTerms, new { @class = "form-check-input" })
+                <label asp-for="AgreeToTerms"></label>
+                <div>
+                    <span asp-validation-for="AgreeToTerms" class="text-danger"></span>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
