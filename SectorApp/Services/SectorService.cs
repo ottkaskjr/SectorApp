@@ -14,9 +14,9 @@ namespace SectorApp.Services
             _dbContext = dbContext;
         }
 
-        public List<Sector> GetAllOrdered()
+        public List<Sector> GetAll()
         {
-            return _dbContext.Sectors.OrderBy(x => x.Code).ToList();
+            return _dbContext.Sectors.ToList();
         }
 
         public Sector GetByCode(int code)

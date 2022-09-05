@@ -51,11 +51,28 @@ namespace SectorApp.Tests.Models.Sector
         }
         
         [Test]
+        public void Name_cannot_be_longer_than_50()
+        {
+            var model = new UpdateSectorViewModel
+            {
+                Name = new string('a', 51),
+                SelectedSectorCode = 1,
+                AgreeToTerms = true
+            };
+            
+            // Act
+            var result = _sut.Validate(model);
+            
+            // Assert
+            result.IsValid.Should().BeFalse();
+        }
+        
+        [Test]
         public void Model_is_valid_if_all_required_properties_are_valid()
         {
             var model = new UpdateSectorViewModel
             {
-                Name = "a",
+                Name = new string('a', 50),
                 SelectedSectorCode = 1,
                 AgreeToTerms = true
             };

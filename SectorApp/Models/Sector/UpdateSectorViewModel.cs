@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -10,21 +10,58 @@ namespace SectorApp.Models.Sector
     {
         public string Name { get; set; }
         public List<SectorViewModel> Sectors { get; set; }
-        
-        [DisplayName("Sector")]
-        public int? SelectedSectorCode { get; set; }
-        
-        [DisplayName("Agree to terms")]
-        public bool AgreeToTerms { get; set; }
 
-        public IEnumerable<SelectListItem> GetSectorListItems()
+        [DisplayName("Sector")] public int? SelectedSectorCode { get; set; }
+
+        [DisplayName("Agree to terms")] public bool AgreeToTerms { get; set; }
+        
+        public IEnumerable<SelectListItem> ArrangeSectorListItems()
         {
-            return Sectors.Select(s => new SelectListItem
+            var result = new List<SelectListItem>();
+            foreach (var mainSector in Sectors)
             {
-                Selected = s.Code == SelectedSectorCode,
-                Text = s.Name,
-                Value = s.Code.ToString()
-            }).Prepend(CreateDefaultSelectListItem());
+                result.Add(Map(mainSector));
+        
+                if (!mainSector.SubSectors.Any())
+                {
+                    continue;
+                }
+
+                foreach (var subSector in mainSector.SubSectors)
+                {
+                    result.Add(Map(subSector, SubSectorLevel.Sub));
+                    if (!subSector.SubSectors.Any())
+                    {
+                        continue;
+                    }
+                    var subSubSectors = subSector.SubSectors.Select(s => Map(s, SubSectorLevel.SubSub)).ToList();
+                    result.AddRange(subSubSectors);
+                }
+            }
+        
+            return result.Prepend(CreateDefaultSelectListItem());
+        }
+
+        private SelectListItem Map(SectorViewModel model, SubSectorLevel? level = null)
+        {
+            return new SelectListItem
+            {
+                Selected = model.Code == SelectedSectorCode,
+                Text = GetNameWithIndentation(model.Name, level),
+                Value = model.Code.ToString(),
+            };
+        }
+
+        private string GetNameWithIndentation(string value, SubSectorLevel? level = null)
+        {
+            if (level == null)
+            {
+                return value;
+            }
+            var indentation = String.Join("", Enumerable.Range(0, (int)level)
+                .Select(x => "\xA0\xA0\xA0\xA0")
+                .ToList());
+            return $"{indentation}{value}";
         }
 
         private SelectListItem CreateDefaultSelectListItem()

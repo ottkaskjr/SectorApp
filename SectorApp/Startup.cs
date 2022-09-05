@@ -1,9 +1,12 @@
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using SectorApp.Data;
 using SectorApp.Providers;
@@ -36,7 +39,8 @@ namespace SectorApp
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages()
+                .AddRazorRuntimeCompilation();
             services.AddScoped<ISectorUserService, SectorUserService>();
             services.AddScoped<ISectorService, SectorService>();
             services.AddScoped<ISectorViewModelProvider, SectorViewModelProvider>();

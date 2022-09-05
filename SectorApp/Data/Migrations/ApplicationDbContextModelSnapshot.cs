@@ -231,7 +231,15 @@ namespace SectorApp.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentSectorCode")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ParentSectorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentSectorId");
 
                     b.ToTable("Sectors");
                 });
@@ -312,6 +320,13 @@ namespace SectorApp.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SectorApp.Data.Entities.Sector", b =>
+                {
+                    b.HasOne("SectorApp.Data.Entities.Sector", "ParentSector")
+                        .WithMany()
+                        .HasForeignKey("ParentSectorId");
                 });
 
             modelBuilder.Entity("SectorApp.Data.Entities.SectorUser", b =>

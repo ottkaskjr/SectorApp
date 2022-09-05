@@ -5,7 +5,7 @@ namespace SectorApp.Services
 {
     public interface ISectorService
     {
-        List<Sector> GetAllOrdered();
+        List<Sector> GetAll();
         Sector GetByCode(int code);
     }
 }

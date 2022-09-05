@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using SectorApp.Data.Entities;
 using SectorApp.Models.Sector;
 using SectorApp.Services;
 
@@ -16,12 +17,23 @@ namespace SectorApp.Providers
 
         public List<SectorViewModel> ProvideModels()
         {
-            var sectors = _sectorService.GetAllOrdered();
-            return sectors.Select(x => new SectorViewModel
+            var sectors = _sectorService.GetAll();
+            return sectors
+                .Where(s => s.ParentSectorCode == null)
+                .Select(s => Map(s, sectors))
+                .ToList();
+        }
+
+        private SectorViewModel Map(Sector sector, List<Sector> sectors)
+        {
+            return new SectorViewModel
             {
-                Code = x.Code,
-                Name = x.Name
-            }).ToList();
+                Code = sector.Code,
+                Name = sector.Name,
+                SubSectors = sectors.Where(s => s.ParentSectorCode == sector.Code)
+                    .Select(s => Map(s, sectors))
+                    .ToList()
+            };
         }
     }
 }
